@@ -1,0 +1,5 @@
+black==21.6b0
+
+flake8
+flake8-black
+flake8-isort

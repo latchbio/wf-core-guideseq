@@ -1,0 +1,90 @@
+name: ldata process staging build
+
+on:
+  push:
+    branches:
+      - "kenny/*"
+      - "aidan/*"
+      - "max/*"
+      - "!main"
+
+jobs:
+  build:
+    name: build, register, test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: docker cache
+        uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: build dependencies
+        run: |
+          pip install -r requirements-build.txt
+
+      - uses: extractions/setup-just@v1
+
+      - name: register
+        run: |
+          just register latch-internal admin.flyte.ligma.ai:81
+          just register latch-internal admin.flyte.sugma.ai:81
+
+      - name: test
+        run: |
+          just test latch-internal admin.flyte.sugma.ai:81
+
+      - name: upload build version
+        uses: actions/upload-artifact@v2
+        with:
+          name: version
+          path: latch/version
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: check out code
+        uses: actions/checkout@v2
+        with:
+          repository: "latchbio/cytoplasm"
+          token: ${{ secrets.PAT_TOKEN }}
+      - name: setup kustomize
+        uses: imranismail/setup-kustomize@v1
+        with:
+          kustomize-version: "4.2.0"
+      - name: download build version
+        uses: actions/download-artifact@v2
+        with:
+          name: version
+      - name: run kustomize
+        run: |
+          export wf_version=`cat version`
+          cd kustomize/overlays/staging
+          # TODO - env var name
+          yq eval -i '(.spec.template.spec.containers[0].env.[] | select(.name == "LDATA_SAM_WF_VERSION") | .value) = env(wf_version)' ribosome/deployment-patch.yaml
+          cd ../dev
+          yq eval -i '(.spec.template.spec.containers[0].env.[] | select(.name == "LDATA_SAM_WF_VERSION") | .value) = env(wf_version)' ribosome/deployment-patch.yaml
+      - name: commit files
+        run: |
+          git config --local user.email "fuckyou@latch.ai"
+          git config --local user.name "GitHub Action"
+          git commit -am "TODO $(cat version)"
+      - name: push changes
+        uses: ad-m/github-push-action@master
+        with:
+          repository: "latchbio/cytoplasm"
+          github_token: ${{ secrets.PAT_TOKEN }}
