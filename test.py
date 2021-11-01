@@ -133,7 +133,7 @@ def test_guideseq(bucket, inputs, outputs):
         time.sleep(90)
 
         for output in outputs:
-            assert _s3_obj_exists(bucket, output.format(name)) is True
+            assert _s3_obj_exists(bucket, output) is True
 
     finally:
         bucket_obj = s3_client.Bucket(bucket)
