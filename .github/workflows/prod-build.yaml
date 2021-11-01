@@ -37,11 +37,11 @@ jobs:
 
       - name: register
         run: |
-          just register 1 admin.flyte.latch.ai:81
+          just register 50 admin.flyte.latch.ai:81
 
       - name: test
         run: |
-          just test 1 admin.flyte.latch.ai:81
+          just test 50 admin.flyte.latch.ai:81
 
       - name: upload build version
         uses: actions/upload-artifact@v2

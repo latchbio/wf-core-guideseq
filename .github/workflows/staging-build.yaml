@@ -40,12 +40,11 @@ jobs:
 
       - name: register
         run: |
-          just register 1 admin.flyte.ligma.ai:81
-          just register 1 admin.flyte.sugma.ai:81
+          just register 942 admin.flyte.sugma.ai:81
 
       - name: test
         run: |
-          just test 1 admin.flyte.sugma.ai:81
+          just test 942 admin.flyte.sugma.ai:81
 
       - name: upload build version
         uses: actions/upload-artifact@v2
