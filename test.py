@@ -91,7 +91,7 @@ def _rm_s3_obj(bucket_name: str, res_path: str) -> bool:
 
 def test_guideseq(bucket, inputs, outputs):
     try:
-        for inpt in nhej_inputs:
+        for inpt in inputs:
             assert _s3_obj_exists(bucket, inpt) is True, "Inputs do not exist."
 
         bucket_obj = s3_client.Bucket(bucket)
