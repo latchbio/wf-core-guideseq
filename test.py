@@ -4,11 +4,11 @@ import os
 import subprocess
 import time
 from textwrap import dedent
+from typing import List
 
 import boto3
 import pytest
 from botocore.exceptions import ClientError
-from typing import List
 
 PROJECT = os.environ["PROJECT"]
 VERSION = os.environ["VERSION"]
