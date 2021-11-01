@@ -52,9 +52,12 @@ def guideseq(
     os.makedirs(str(input_dir), exist_ok=True)
     download_dir(name, str(input_dir), bucket_name)
 
-    yaml_input = open(str(Path(manifest).resolve()), "r")
-    data = yaml.load(yaml_input)
+    with open(str(Path(manifest).resolve()), "r") as f:
+        data = yaml.load(f)
+    data["output_folder"] = "guideseq_outputs"
     output_loc = data["output_folder"]
+    with open(str(Path(manifest).resolve()), "w") as f:
+        yaml.dump(data, f)
 
     guideseq_cmd = [
         "python2.7",
@@ -107,7 +110,7 @@ def guideseq_wf(
         manifest:
           File describing all inputs. See https://github.com/tsailabSJ/guideseq for instructions.
           For Latch, modify the manifest so that paths start at the input directory. For example, if you have
-          an file in your input directory with path `input_dir/data/undemux.r1.fastq.gz`, write it as
+          an file in your input directory with path `input_dir/data/undemux.r1.fastq.gz`, write it exactly like
           `input_dir/data/undemux.r1.fastq.gz`.
 
           __metadata__:
@@ -135,7 +138,7 @@ def guideseq_wf(
             display_name: Data is Demultiplexed
 
         output_dir:
-          Will place the output directory here
+          Will place the output directory here. Overwrites value in input manifest, which can be ignored.
 
           __metadata__:
             display_name: Output Directory
@@ -151,8 +154,12 @@ def guideseq_wf(
     )
 
 
-# LaunchPlan.create(
-#    "guideseq_wf.Basic",
-#    guideseq_wf,
-#    default_inputs={},
-# )
+LaunchPlan.create(
+    "guideseq_wf.Basic",
+    guideseq_wf,
+    default_inputs={
+        "manifest": FlyteFile("latch://welcome/guideseq/test_manifest.yaml"),
+        "input_dir": FlyteDirectory("latch://welcome/guideseq/test"),
+        "output_dir": FlyteDirectory("latch://welcome/guideseq"),
+    },
+)
