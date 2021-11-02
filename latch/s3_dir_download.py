@@ -42,11 +42,11 @@ def download_dir(prefix, local, bucket, client=s3_client):
                     dirs.append(k)
             next_token = results.get("NextContinuationToken")
     for d in dirs:
-        dest_pathname = os.path.join(local, d)
+        dest_pathname = local + d.replace(prefix, "")
         if not os.path.exists(os.path.dirname(dest_pathname)):
             os.makedirs(os.path.dirname(dest_pathname))
     for k in keys:
-        dest_pathname = os.path.join(local, k)
+        dest_pathname = local + k.replace(prefix, "")
         if not os.path.exists(os.path.dirname(dest_pathname)):
             os.makedirs(os.path.dirname(dest_pathname))
         client.download_file(bucket, k, dest_pathname)

@@ -54,8 +54,8 @@ docker_image_full := docker_image_prefix + ":" + docker_image_version
 # Entrypoint.
 #
 
-def_project := "1068"
-def_endpoint :=  "admin.flyte.sugma.ai:81"
+def_project := "50"
+def_endpoint :=  "admin.flyte.latch.ai:81"
 register project=def_project endpoint=def_endpoint: dbnp
   docker run -i --rm \
     -e REGISTRY={{docker_registry}} \

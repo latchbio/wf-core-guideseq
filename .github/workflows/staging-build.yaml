@@ -1,0 +1,53 @@
+name: ldata process staging build
+
+on:
+  push:
+    branches:
+      - "kenny/*"
+      - "aidan/*"
+      - "maximsmol/*"
+      - "!main"
+
+jobs:
+  build:
+    name: build, register, test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+
+      - name: docker cache
+        uses: satackey/action-docker-layer-caching@v0.0.11
+        continue-on-error: true
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: build dependencies
+        run: |
+          pip install -r requirements-build.txt
+
+      - uses: extractions/setup-just@v1
+
+      - name: register
+        run: |
+          just register 942 admin.flyte.sugma.ai:81
+
+      - name: test
+        run: |
+          just test 942 admin.flyte.sugma.ai:81
+
+      - name: upload build version
+        uses: actions/upload-artifact@v2
+        with:
+          name: version
+          path: latch/version
