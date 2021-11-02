@@ -158,8 +158,8 @@ LaunchPlan.create(
     "guideseq_wf.Basic",
     guideseq_wf,
     default_inputs={
-        "manifest": FlyteFile("latch://welcome/guideseq/test_manifest.yaml"),
-        "input_dir": FlyteDirectory("latch://welcome/guideseq/test"),
-        "output_dir": FlyteDirectory("latch://welcome/guideseq"),
+        "manifest": FlyteFile("s3://latch-public/welcome/guideseq/test_manifest.yaml"),
+        "input_dir": FlyteDirectory("s3://latch-public/welcome/guideseq/test"),
+        "output_dir": FlyteDirectory("latch://welcome"),
     },
 )
