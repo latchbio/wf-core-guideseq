@@ -40,6 +40,7 @@ def inputs():
         ".test/wf-core-guideseq",
     ]
 
+
 @pytest.fixture
 def outputs(bucket):
     return [
@@ -140,4 +141,3 @@ def test_guideseq(bucket, inputs, outputs):
         bucket_obj.objects.filter(
             Prefix=f".test/wf-core-guideseq/guideseq_outputs"
         ).delete()
-
