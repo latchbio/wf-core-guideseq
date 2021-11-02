@@ -1,3 +1,3 @@
-#+TITLE: Integration of guideseq into Latch
-#+AUTHOR: Aidan Abdulali
+# Integration of guideseq into Latch
+## Aidan Abdulali
 
