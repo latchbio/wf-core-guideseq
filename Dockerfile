@@ -1,4 +1,4 @@
-FROM 812206152185.dkr.ecr.us-west-2.amazonaws.com/wf-base:wf-base-d2fb-main
+FROM 812206152185.dkr.ecr.us-west-2.amazonaws.com/wf-base:fbe8-main
 
 ENV SHELL="/bin/bash"
 
@@ -28,3 +28,6 @@ WORKDIR /root
 
 ARG tag
 ENV FLYTE_INTERNAL_IMAGE $tag
+
+ARG nucleus_endpoint
+ENV LATCH_AUTHENTICATION_ENDPOINT $nucleus_endpoint

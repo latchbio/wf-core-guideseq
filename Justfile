@@ -38,12 +38,16 @@ docker_image_version := workflow_version
 docker_image_prefix := docker_registry + "/" + app_name
 docker_image_full := docker_image_prefix + ":" + docker_image_version
 
+def_environment := "latch.bio"
+def_project := "50"
+def_endpoint :=  "admin.flyte." + def_environment + ":81"
+def_nucleus_endpoint := "https://nucleus." + def_environment
 
 @docker-login:
   aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin {{docker_registry}}
 
-@docker-build: fmt lint
-  docker build --build-arg tag={{docker_image_full}} -t {{docker_image_full}} .
+@docker-build:
+  docker build --build-arg tag={{docker_image_full}} --build-arg nucleus_endpoint={{def_nucleus_endpoint}} -t {{docker_image_full}} .
 
 @docker-push:
   docker push {{docker_image_full}}
@@ -54,8 +58,6 @@ docker_image_full := docker_image_prefix + ":" + docker_image_version
 # Entrypoint.
 #
 
-def_project := "50"
-def_endpoint :=  "admin.flyte.latch.ai:81"
 register project=def_project endpoint=def_endpoint: dbnp
   docker run -i --rm \
     -e REGISTRY={{docker_registry}} \
