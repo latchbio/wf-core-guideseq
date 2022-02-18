@@ -237,6 +237,7 @@ def guideseq_wf(
 
           __metadata__:
             display_name: Output Directory
+            output: true
 
     """
 
