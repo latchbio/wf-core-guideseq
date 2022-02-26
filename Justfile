@@ -34,7 +34,7 @@ secret_path := "/root/client_secret.txt"
 
 app_name := "guideseq_python2"
 docker_registry := "812206152185.dkr.ecr.us-west-2.amazonaws.com"
-docker_image_version := workflow_version
+docker_image_version := `inp=$(cat latch/version); echo "${inp//+/_}"`
 docker_image_prefix := docker_registry + "/" + app_name
 docker_image_full := docker_image_prefix + ":" + docker_image_version
 
