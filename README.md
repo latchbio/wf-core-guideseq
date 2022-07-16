@@ -1,3 +1,3 @@
 # Integration of guideseq into Latch
-## Aidan Abdulali
 
+# The description and code for the algorithm can be found in this [repository](https://github.com/tsailabSJ/guideseq).
